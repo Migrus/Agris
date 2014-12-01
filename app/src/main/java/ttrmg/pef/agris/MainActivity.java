@@ -74,12 +74,12 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
     @Override
     public void sendButton() {
         if (findViewById(R.id.result) == null) {
-            FragmentResult formFragment = FragmentResult.newInstance();
+            FragmentResult formFragment = FragmentResult.newInstance(contactList);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, formFragment).addToBackStack(null)
                     .commit();
         } else {
-            FragmentResult formFragment = FragmentResult.newInstance();
+            FragmentResult formFragment = FragmentResult.newInstance(contactList);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.result, formFragment).addToBackStack(null)
                     .commit();

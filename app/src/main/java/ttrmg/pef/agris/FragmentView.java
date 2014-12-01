@@ -8,6 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 
 public class FragmentView extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
@@ -29,7 +32,7 @@ public class FragmentView extends Fragment implements View.OnClickListener {
      * @return A new instance of fragment FormFragment.
      */
     // TO_DO: Rename and change types and number of parameters
-    public static FragmentView newInstance(/*String param1, String param2*/) {
+    public static FragmentView newInstance() {
         FragmentView fragment = new FragmentView();
 //        Bundle args = new Bundle();
 //        args.putString(ARG_PARAM1, param1);

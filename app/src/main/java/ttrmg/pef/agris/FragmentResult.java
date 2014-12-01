@@ -7,16 +7,22 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class FragmentResult extends Fragment {
     // TODO: Rename and change types of parameters
     private Boolean back = false;
+    private ArrayList<HashMap<String, String>> contactList;
 
     private OnFragmentInteractionListener mListener;
 
 
-    public static FragmentResult newInstance() {
+    public static FragmentResult newInstance(ArrayList<HashMap<String, String>> contactList) {
         FragmentResult fragment = new FragmentResult();
         return fragment;
     }
@@ -29,6 +35,7 @@ public class FragmentResult extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+
         }
     }
 
@@ -43,6 +50,9 @@ public class FragmentResult extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_result, container, false);
+
+
+
         return v;
     }
 

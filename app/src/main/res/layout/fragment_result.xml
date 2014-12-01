@@ -11,15 +11,83 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="15dp"
-            android:id="@+id/r_layout">
+            android:orientation="horizontal"
+            android:weightSum="2">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="fragment 2"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Řazení"/>
+
+                <RadioGroup
+                    android:id="@+id/sort"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkedButton="@+id/radioDefault"
+                    android:orientation="vertical">
+
+                    <RadioButton
+                        android:id="@+id/radioDefault"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Datum" />
+
+                    <RadioButton
+                        android:id="@+id/radioName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Název" />
+
+                    <RadioButton
+                        android:id="@+id/radioPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cena" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Měna"/>
+                <RadioGroup
+                    android:id="@+id/mena"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkedButton="@+id/radioDefault"
+                    android:orientation="vertical">
+
+                    <RadioButton
+                        android:id="@+id/radioCZK"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CZK" />
+
+                    <RadioButton
+                        android:id="@+id/EUR"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="EUR" />
+                </RadioGroup>
+            </LinearLayout>
+
         </LinearLayout>
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/list2"></ListView>
+
 
     </ScrollView>
 
