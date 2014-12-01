@@ -1,6 +1,9 @@
 package ttrmg.pef.agris;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Patterns;
@@ -12,10 +15,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class MainActivity extends ActionBarActivity implements FragmentView.OnFragmentInteractionListener, FragmentResult.OnFragmentInteractionListener {
+    public ArrayList<HashMap<String, String>> contactList;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +34,8 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
                     .add(R.id.container, formFragment)
                     .commit();
         }
+        triggerDownload("http://www.csita.cz/sklad/studenti.json");
+
     }
 
 
@@ -60,36 +69,6 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
         toast.show();
     }
 
-    public final static boolean isValidEmail(CharSequence target) {
-        if (target == null) {
-            return false;
-        } else {
-            return Patterns.EMAIL_ADDRESS.matcher(target).matches();
-        }
-    }
-    public final static boolean isValidPhone(CharSequence target) {
-        if (target == null) {
-            return false;
-        } else {
-            return Patterns.PHONE.matcher(target).matches();
-        }
-    }
-
-    private void loopLayoutReset(LinearLayout ll){
-        int count = ll.getChildCount();
-        for (int i = 0;i <= count;i++){
-            View v = ll.getChildAt(i);
-            if (v instanceof LinearLayout) loopLayoutReset((LinearLayout) v);
-            if (v != null && v instanceof EditText) {
-                clearText(v);
-            }
-        }
-    }
-
-    private void clearText(View v){
-        ((TextView) v).setText("");
-    }
-
 
     @Override
     public void sendButton() {
@@ -109,5 +88,35 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
     @Override
     public void toast(String toast) {
         showToast(toast);
+    }
+
+    public boolean isConnect()
+    {
+        boolean connected = false;
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            //we are connected to a network
+            connected = true;
+            this.showToast("Připojeno");
+        }
+        else {
+            connected = false;
+            this.showToast("Nepřipojeno");
+        }
+        return  connected;
+    }
+
+    // When user clicks button, calls AsyncTask.
+    // Before attempting to fetch the URL, makes sure that there is a network connection.
+    public void triggerDownload(String stringUrl) {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+             new DownloadWebpageTask(MainActivity.this,contactList).execute(stringUrl);
+        } else {
+            showToast("Připojení k internetu není k dispozici!");
+        }
     }
 }
