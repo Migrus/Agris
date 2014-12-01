@@ -93,10 +93,17 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
 
     @Override
     public void sendButton() {
-        FragmentResult formFragment = FragmentResult.newInstance();
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, formFragment).addToBackStack(null)
-                .commit();
+        if (findViewById(R.id.result) == null) {
+            FragmentResult formFragment = FragmentResult.newInstance();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, formFragment).addToBackStack(null)
+                    .commit();
+        } else {
+            FragmentResult formFragment = FragmentResult.newInstance();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.result, formFragment).addToBackStack(null)
+                    .commit();
+        }
     }
 
     @Override
