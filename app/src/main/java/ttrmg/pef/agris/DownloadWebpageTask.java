@@ -1,5 +1,6 @@
 package ttrmg.pef.agris;
 
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -121,18 +122,6 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, Void> {
         // Dismiss the progress dialog
         if (pDialog.isShowing())
             pDialog.dismiss();
-
-        /**
-         * Updating parsed JSON data into ListView
-         * */
-        /*ListAdapter adapter = new SimpleAdapter(
-                MyActivity.this, contactList,
-                R.layout.list_item, new String[] { TAG_NAME, TAG_SURNAME,
-                TAG_ID, TAG_EMAIL }, new int[] { R.id.name,
-                R.id.surname, R.id.id, R.id.email });
-
-        setListAdapter(adapter);*/
-        //showToast(result);
     }
 
 

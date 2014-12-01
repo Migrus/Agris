@@ -1,5 +1,6 @@
 package ttrmg.pef.agris;
 
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -34,8 +35,8 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
                     .add(R.id.container, formFragment)
                     .commit();
         }
-        triggerDownload("http://www.csita.cz/sklad/studenti.json");
-
+        contactList = new ArrayList<HashMap<String, String>>();
+        isConnect();
     }
 
 
@@ -99,6 +100,7 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
             //we are connected to a network
             connected = true;
             this.showToast("Připojeno");
+            triggerDownload("http://www.csita.cz/sklad/studenti.json");
         }
         else {
             connected = false;

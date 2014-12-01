@@ -27,6 +27,11 @@
                 android:padding="10dp"
                 android:text="fragment 2"/>
 
+                <ListView
+                    android:id="@android:id/list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"/>
+
 
         </LinearLayout>
     </ScrollView>
