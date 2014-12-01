@@ -1,0 +1,37 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="pef.kit.hotel.FragmentView">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <!--Abychom neměli ihned po otevření aplikace focus na
+        prvním textovém poli a otevřenou klávesnici:
+        android:focusable="true"
+        android:focusableInTouchMode="true"-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:background="#eeeeee"
+            android:id="@+id/layout"
+            >
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:id="@+id/send"
+                android:padding="10dp"
+                android:text="fragment 2"/>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</FrameLayout>
