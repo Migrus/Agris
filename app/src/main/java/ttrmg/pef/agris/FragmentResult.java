@@ -8,7 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,12 +20,17 @@ import java.util.HashMap;
 public class FragmentResult extends Fragment {
     // TODO: Rename and change types of parameters
     private Boolean back = false;
+    public String aaa;
+    private final static String P1 = "data";
 
     private OnFragmentInteractionListener mListener;
 
 
-    public static FragmentResult newInstance() {
+    public static FragmentResult newInstance(String bbb) {
         FragmentResult fragment = new FragmentResult();
+        Bundle args = new Bundle();
+        args.putString(P1, bbb);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -34,6 +42,8 @@ public class FragmentResult extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            aaa = getArguments().getString(P1);
+
 
         }
     }
@@ -49,6 +59,11 @@ public class FragmentResult extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_result, container, false);
+
+
+
+        ((TextView)v.findViewById(R.id.txt)).setText(aaa);
+
 
 
 

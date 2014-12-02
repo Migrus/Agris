@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,7 +27,9 @@ import java.util.HashMap;
 
 public class MainActivity extends ActionBarActivity implements FragmentView.OnFragmentInteractionListener, FragmentResult.OnFragmentInteractionListener {
     public ArrayList<HashMap<String, String>> contactList;
-
+    public String textkpredani;
+    String text = "text co se ma ulozit, pak nacist, predat do fragmentu a pak zobrazit";
+    String textuloz = "SouborKUlozeni";
 
 
 
@@ -43,6 +46,7 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
         contactList = new ArrayList<HashMap<String, String>>();
         isConnect();
         WriteIntoFile();
+        textkpredani = OpenFileDialog(textuloz);
     }
 
 
@@ -79,13 +83,14 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
 
     @Override
     public void sendButton() {
+
         if (findViewById(R.id.result) == null) {
-            FragmentResult formFragment = FragmentResult.newInstance();
+            FragmentResult formFragment = FragmentResult.newInstance(textkpredani);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, formFragment).addToBackStack(null)
                     .commit();
         } else {
-            FragmentResult formFragment = FragmentResult.newInstance();
+            FragmentResult formFragment = FragmentResult.newInstance(textkpredani);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.result, formFragment).addToBackStack(null)
                     .commit();
@@ -146,9 +151,9 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
         }*/
 
         /* DALSI ZPUSOB - pouze jinak*/
-        String text = "text";
+
         try {
-            FileOutputStream fos = openFileOutput("SouborkUlozeni", Context.MODE_PRIVATE);
+            FileOutputStream fos = openFileOutput(textuloz, Context.MODE_PRIVATE);
             fos.write(text.getBytes());
             fos.close();
         } catch (FileNotFoundException e) {
@@ -156,7 +161,24 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    public String OpenFileDialog(String file){
+
+        //Read file in Internal Storage
+        FileInputStream fis;
+        String content = "";
+        try {
+            fis = openFileInput(file);
+            byte[] input = new byte[fis.available()];
+            while (fis.read(input) != -1) {}
+            content += new String(input);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return content;
 
     }
 
