@@ -29,6 +29,7 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,12 +80,12 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
     @Override
     public void sendButton() {
         if (findViewById(R.id.result) == null) {
-            FragmentResult formFragment = FragmentResult.newInstance(contactList);
+            FragmentResult formFragment = FragmentResult.newInstance();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, formFragment).addToBackStack(null)
                     .commit();
         } else {
-            FragmentResult formFragment = FragmentResult.newInstance(contactList);
+            FragmentResult formFragment = FragmentResult.newInstance();
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.result, formFragment).addToBackStack(null)
                     .commit();
@@ -127,11 +128,10 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
         }
     }
 
-    FileOutputStream fos;
-    String FILENAME = "VypisStudentu";
+
     //VYTVORI SOUBOR "VypisStudentu", do ktereho vypise hodnoty 1. objektu z pole. DOKAZU VYPSAT PUBLIC VECI --- TAMTA METODA BYLA PRIVATE!
     public void WriteIntoFile() {
-        try {
+        /* try {
             fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
             fos.write(new DownloadWebpageTask(MainActivity.this,contactList).contactList.indexOf(1));
          // fos.write(new DownloadWebpageTask(MainActivity.this,contactList).downloadUrl("http..."));
@@ -143,20 +143,21 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
-        /* DALSI ZPUSOB - pouze jinak
-        File f = new File(FILENAME);
+        /* DALSI ZPUSOB - pouze jinak*/
+        String text = "text";
         try {
-            fos = new FileOutputStream(f);
-            //write some data
+            FileOutputStream fos = openFileOutput("SouborkUlozeni", Context.MODE_PRIVATE);
+            fos.write(text.getBytes());
             fos.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        */
+
 
     }
+
 }

@@ -17,12 +17,11 @@ import java.util.HashMap;
 public class FragmentResult extends Fragment {
     // TODO: Rename and change types of parameters
     private Boolean back = false;
-    private ArrayList<HashMap<String, String>> contactList;
 
     private OnFragmentInteractionListener mListener;
 
 
-    public static FragmentResult newInstance(ArrayList<HashMap<String, String>> contactList) {
+    public static FragmentResult newInstance() {
         FragmentResult fragment = new FragmentResult();
         return fragment;
     }
