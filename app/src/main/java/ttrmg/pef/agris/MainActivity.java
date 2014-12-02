@@ -16,6 +16,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -37,6 +41,7 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
         }
         contactList = new ArrayList<HashMap<String, String>>();
         isConnect();
+        WriteIntoFile();
     }
 
 
@@ -120,5 +125,38 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
         } else {
             showToast("Připojení k internetu není k dispozici!");
         }
+    }
+
+    FileOutputStream fos;
+    String FILENAME = "VypisStudentu";
+    //VYTVORI SOUBOR "VypisStudentu", do ktereho vypise hodnoty 1. objektu z pole. DOKAZU VYPSAT PUBLIC VECI --- TAMTA METODA BYLA PRIVATE!
+    public void WriteIntoFile() {
+        try {
+            fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+            fos.write(new DownloadWebpageTask(MainActivity.this,contactList).contactList.indexOf(1));
+         // fos.write(new DownloadWebpageTask(MainActivity.this,contactList).downloadUrl("http..."));
+         // TOHLE BY MI MELO VYPSAT CELY OBSAH URL DO SOUBORU, ale ta metoda nebere ten vstup, pritom tam rvu string..
+         // Výstupem tý metody je string "contentAsString", ktery obsahuje vsechna data tech studentu a ten potrebujeme zapsat do souboru
+         // Zkus jestli ti to vypise alespon neco z toho contactListu. Nebo zkonstroluj jestli se ti vytvori alespon prazdny soubor VypisStudentu.
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        /* DALSI ZPUSOB - pouze jinak
+        File f = new File(FILENAME);
+        try {
+            fos = new FileOutputStream(f);
+            //write some data
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        */
+
     }
 }
