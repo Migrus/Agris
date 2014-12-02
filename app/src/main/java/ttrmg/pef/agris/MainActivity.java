@@ -154,7 +154,8 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
 
         try {
             FileOutputStream fos = openFileOutput(textuloz, Context.MODE_PRIVATE);
-            fos.write(text.getBytes());
+            //fos.write(text.getBytes());
+            fos.write(new DownloadWebpageTask(MainActivity.this,contactList).downloadUrl("http://www.csita.cz/sklad/studenti.json").getBytes());
             fos.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
