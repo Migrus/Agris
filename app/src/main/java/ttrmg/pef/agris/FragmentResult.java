@@ -22,7 +22,7 @@ public class FragmentResult extends Fragment {
     private OnFragmentInteractionListener mListener;
 
 
-    public static FragmentResult newInstance(ArrayList<HashMap<String, String>> contactList) {
+    public static FragmentResult newInstance() {
         FragmentResult fragment = new FragmentResult();
         return fragment;
     }
