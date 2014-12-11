@@ -2,12 +2,27 @@ package ttrmg.pef.agris;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,6 +30,24 @@ import java.util.HashMap;
 public class FragmentView extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String DEBUG_TAG = "DEBUG_TAG";
+    private ProgressDialog pDialog;
+    // JSON Node names
+    private static final String TAG_CONTACTS = "ceny";
+    private static final String TAG_ID = "id";
+    private static final String TAG_ID_SKUPINA = "id_skupina";
+    private static final String TAG_NAZEV = "nazev";
+
+
+    public String name = "";
+
+
+    // contacts JSONArray
+    JSONArray contacts = null;
+
+    // Hashmap for ListView
+    ArrayList<HashMap<String, String>> contactList;
+
 
 
     // TODO: Rename and change types of parameters
@@ -58,7 +91,8 @@ public class FragmentView extends Fragment implements View.OnClickListener {
 
         View view = inflater.inflate(R.layout.fragment_form, container, false);
         view.findViewById(R.id.send).setOnClickListener(this);
-
+        contactList = new ArrayList<HashMap<String, String>>();
+        isConnect();
         return view;
     }
 
@@ -100,6 +134,165 @@ public class FragmentView extends Fragment implements View.OnClickListener {
      */
     public interface OnFragmentInteractionListener {
         public void sendButton();
+        public void toast (String toast);
+    }
+
+    public boolean isConnect()
+    {
+        boolean connected = false;
+        ConnectivityManager connectivityManager = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            //we are connected to a network
+            connected = true;
+            mListener.toast("Připojeno");
+            triggerDownload("http://develop.agris.cz/Prices?vratmi=json");
+        }
+        else {
+            connected = false;
+            mListener.toast("Nepřipojeno");
+        }
+        return  connected;
+    }
+
+    public void triggerDownload(String stringUrl) {
+        ConnectivityManager connMgr = (ConnectivityManager)getActivity().
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            new DownloadWebpageTask().execute(stringUrl);
+        } else {
+            mListener.toast("Připojení k internetu není k dispozici!");
+        }
+    }
+
+    // Uses AsyncTask to create a task away from the main UI thread. This task takes a
+    // URL string and uses it to create an HttpUrlConnection. Once the connection
+    // has been established, the AsyncTask downloads the contents of the webpage as
+    // an InputStream. Finally, the InputStream is converted into a string, which is
+    // displayed in the UI by the AsyncTask's onPostExecute method.
+    private class DownloadWebpageTask extends AsyncTask<String, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Showing progress dialog
+            pDialog = new ProgressDialog(getActivity());
+            pDialog.setMessage("Načítám data...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+
+        }
+
+        @Override
+        protected Void doInBackground(String... urls) {
+
+            String jsonStr = null;
+            // params comes from the execute() call: params[0] is the url.
+            try {
+                jsonStr = downloadUrl(urls[0]);
+            } catch (IOException e) {
+                Log.e("ServiceHandler", "problem");
+                return null;
+            }
+
+            if (jsonStr != null) {
+                try {
+                    JSONObject jsonObj = new JSONObject(jsonStr);
+
+                    // Getting JSON Array node
+                    contacts = jsonObj.getJSONArray(TAG_CONTACTS);
+
+                    // looping through All Contacts
+                    for (int i = 0; i < contacts.length(); i++) {
+                        JSONObject c = contacts.getJSONObject(i);
+
+                        String id = c.getString(TAG_ID);
+                        String id_skupina = c.getString(TAG_ID_SKUPINA);
+                        String nazev = c.getString(TAG_NAZEV);
+
+
+                        //JSONObject jsonEmailsObj = new JSONObject(jsonStrEmail);
+                        //String email = jsonEmailsObj.getString(TAG_EMAIL);
+
+                        // tmp hashmap for single contact
+                        HashMap<String, String> contact = new HashMap<String, String>();
+
+                        // adding each child node to HashMap key => value
+                        contact.put(TAG_ID, id);
+                        contact.put(TAG_ID_SKUPINA, id_skupina);
+                        contact.put(TAG_NAZEV, nazev);
+
+
+
+                        name = nazev;
+
+                        // adding contact to contact list
+                        contactList.add(contact);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Log.e("ServiceHandler", "Couldn't get any data from the url");
+            }
+            return null;
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            // Dismiss the progress dialog
+            if (pDialog.isShowing())
+                pDialog.dismiss();
+
+            mListener.toast(contactList.get(1).get(TAG_NAZEV));
+
+            /**
+             * Updating parsed JSON data into ListView
+             * */
+
+            //Toast(contactList.get(0).get(0));
+            //Toast(result);
+        }
+    }
+
+    // Given a URL, establishes an HttpUrlConnection and retrieves
+    // the web page content as a InputStream, which it returns as
+    // a string.
+
+    private String downloadUrl(String myurl) throws IOException {
+        InputStream is = null;
+        // Only display the first 500 characters of the retrieved
+        // web page content.
+
+        try {
+            URL url = new URL(myurl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000 /* milliseconds */);
+            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            // Starts the query
+            conn.connect();
+            int response = conn.getResponseCode();
+            Log.d(DEBUG_TAG, "The response is: " + response);
+            is = conn.getInputStream();
+
+            // Convert the InputStream into a string
+            String contentAsString = convertStreamToString(is);
+            return contentAsString;
+
+            // Makes sure that the InputStream is closed after the app is
+            // finished using it.
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+        }
+    }
+    static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 
 }
