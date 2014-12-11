@@ -105,6 +105,8 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
         }
     }
 
+
+
     @Override
     public void toast(String toast) {
         showToast(toast);

@@ -13,7 +13,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -49,8 +52,7 @@ public class FragmentView extends Fragment implements View.OnClickListener {
 
     // Hashmap for ListView
     ArrayList<HashMap<String, String>> contactList;
-
-
+    ArrayList<String> adapterList;
 
     // TODO: Rename and change types of parameters
 
@@ -94,7 +96,8 @@ public class FragmentView extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_form, container, false);
         view.findViewById(R.id.send).setOnClickListener(this);
         contactList = new ArrayList<HashMap<String, String>>();
-        list1 = (ListView)view.findViewById(R.id.list1);
+        list1 = (ListView) view.findViewById(R.id.list1);
+        adapterList = new ArrayList<>();
         isConnect();
         return view;
     }
@@ -137,29 +140,28 @@ public class FragmentView extends Fragment implements View.OnClickListener {
      */
     public interface OnFragmentInteractionListener {
         public void sendButton();
-        public void toast (String toast);
+
+        public void toast(String toast);
     }
 
-    public boolean isConnect()
-    {
+    public boolean isConnect() {
         boolean connected = false;
-        ConnectivityManager connectivityManager = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                 connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             //we are connected to a network
             connected = true;
             mListener.toast("Připojeno");
             triggerDownload("http://develop.agris.cz/Prices?vratmi=json");
-        }
-        else {
+        } else {
             connected = false;
             mListener.toast("Nepřipojeno");
         }
-        return  connected;
+        return connected;
     }
 
     public void triggerDownload(String stringUrl) {
-        ConnectivityManager connMgr = (ConnectivityManager)getActivity().
+        ConnectivityManager connMgr = (ConnectivityManager) getActivity().
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
@@ -226,7 +228,6 @@ public class FragmentView extends Fragment implements View.OnClickListener {
                         contact.put(TAG_NAZEV, nazev);
 
 
-
                         name = nazev;
 
                         // adding contact to contact list
@@ -240,6 +241,7 @@ public class FragmentView extends Fragment implements View.OnClickListener {
             }
             return null;
         }
+
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(Void result) {
@@ -248,7 +250,20 @@ public class FragmentView extends Fragment implements View.OnClickListener {
             if (pDialog.isShowing())
                 pDialog.dismiss();
 
-            mListener.toast(contactList.get(1).get(TAG_NAZEV));
+
+            for (int i = 0; i < contactList.size(); i++) {
+
+                String sr1 = "";
+                sr1 = (contactList.get(i).get(TAG_NAZEV));
+                adapterList.add(sr1);
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, adapterList);
+            list1.setAdapter(adapter);
+
+            //ArrayAdapter<String> adapterDatum = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, ceny);
+
+            //list1.setAdapter(adapterDatum);
 
             /**
              * Updating parsed JSON data into ListView
@@ -293,9 +308,12 @@ public class FragmentView extends Fragment implements View.OnClickListener {
             }
         }
     }
+
     static String convertStreamToString(java.io.InputStream is) {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }
 
 }
+
+

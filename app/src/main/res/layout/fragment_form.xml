@@ -4,36 +4,19 @@
     android:layout_height="match_parent"
     tools:context="ttrmg.pef.agris.FragmentView">
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:background="#eeeeee"
-            android:id="@+id/layout"
-            >
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:id="@+id/send"
-                android:padding="10dp"
-                android:text="fragment 2"/>
-
-                <ListView
+    <ListView
                     android:id="@+id/list1"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:id="@+id/send"
+        android:padding="10dp"
+        android:text="fragment 2"
+        android:layout_gravity="left|bottom" />
 
-        </LinearLayout>
-    </ScrollView>
 
 </FrameLayout>

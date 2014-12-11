@@ -14,7 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,7 +26,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 
@@ -50,9 +54,11 @@ public class FragmentResult extends Fragment {
 
     // Hashmap for ListView
     ArrayList<HashMap<String, String>> contactList;
+    ArrayList<String> adapterList;
 
     private OnFragmentInteractionListener mListener;
 
+    ListView list2;
 
     public static FragmentResult newInstance() {
         FragmentResult fragment = new FragmentResult();
@@ -84,7 +90,8 @@ public class FragmentResult extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_result, container, false);
-
+        adapterList = new ArrayList<>();
+        list2 = (ListView) v.findViewById(R.id.list2);
 
 
         return v;
@@ -254,7 +261,18 @@ public class FragmentResult extends Fragment {
             if (pDialog.isShowing())
                 pDialog.dismiss();
 
-            mListener.toast(contactList.get(1).get(TAG_HODNOTA));
+
+            for (int i = 0; i < contactList.size(); i++) {
+                String date = contactList.get(i).get(TAG_DATUM).substring(6,16);
+                String  datum = new SimpleDateFormat("MM/dd/yyyy").format(new Date(Integer.parseInt(date) * 1000L));
+                String sr1 = "";
+                sr1 =  datum + "  " + (contactList.get(i).get(TAG_NAZEV))+ "  " + (contactList.get(i).get(TAG_HODNOTA))
+                        + "  " + (contactList.get(i).get(TAG_MENA)+"/"+contactList.get(i).get(TAG_MIRA));
+                adapterList.add(sr1);
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, adapterList);
+            list2.setAdapter(adapter);
 
             /**
              * Updating parsed JSON data into ListView
@@ -303,5 +321,4 @@ public class FragmentResult extends Fragment {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }
-
 }
