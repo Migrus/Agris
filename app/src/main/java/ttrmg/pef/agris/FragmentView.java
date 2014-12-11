@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -37,6 +38,7 @@ public class FragmentView extends Fragment implements View.OnClickListener {
     private static final String TAG_ID = "id";
     private static final String TAG_ID_SKUPINA = "id_skupina";
     private static final String TAG_NAZEV = "nazev";
+    ListView list1;
 
 
     public String name = "";
@@ -92,6 +94,7 @@ public class FragmentView extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_form, container, false);
         view.findViewById(R.id.send).setOnClickListener(this);
         contactList = new ArrayList<HashMap<String, String>>();
+        list1 = (ListView)view.findViewById(R.id.list1);
         isConnect();
         return view;
     }
