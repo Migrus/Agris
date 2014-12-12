@@ -261,7 +261,25 @@ public class FragmentResult extends Fragment {
             if (pDialog.isShowing())
                 pDialog.dismiss();
 
+            ArrayList<SearchResults> results = new ArrayList<SearchResults>();
 
+
+            for (int i = 0; i < contactList.size(); i++) {
+                String date = contactList.get(i).get(TAG_DATUM).substring(6, 16);
+                String datum = new SimpleDateFormat("MM/dd/yyyy").format(new Date(Integer.parseInt(date) * 1000L));
+
+                SearchResults sr = new SearchResults();
+                sr.setName(datum);
+                sr.setCityState(contactList.get(i).get(TAG_NAZEV));
+                sr.setPhone(contactList.get(i).get(TAG_HODNOTA));
+                sr.setJednotky(contactList.get(i).get(TAG_MENA) + "/" + contactList.get(i).get(TAG_MIRA));
+                results.add(sr);
+            }
+
+            list2.setAdapter(new MyCustomBaseAdapter(getActivity(), results));
+
+
+            /**
             for (int i = 0; i < contactList.size(); i++) {
                 String date = contactList.get(i).get(TAG_DATUM).substring(6,16);
                 String  datum = new SimpleDateFormat("MM/dd/yyyy").format(new Date(Integer.parseInt(date) * 1000L));
@@ -273,6 +291,7 @@ public class FragmentResult extends Fragment {
 
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, adapterList);
             list2.setAdapter(adapter);
+             */
 
             /**
              * Updating parsed JSON data into ListView
@@ -320,5 +339,100 @@ public class FragmentResult extends Fragment {
     static String convertStreamToString(java.io.InputStream is) {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
+    }
+
+
+
+
+    public class SearchResults {
+        private String name = "";
+        private String cityState = "";
+        private String phone = "";
+        private String jednotka = "";
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setCityState(String cityState) {
+            this.cityState = cityState;
+        }
+
+        public String getCityState() {
+            return cityState;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+        public void setJednotky(String jednotka) {
+            this.jednotka = jednotka;
+        }
+
+        public String getJednotka() {
+            return jednotka;
+        }
+    }
+
+    public class MyCustomBaseAdapter extends BaseAdapter {
+        private ArrayList<SearchResults> searchArrayList;
+
+        private LayoutInflater mInflater;
+
+        public MyCustomBaseAdapter(Context context, ArrayList<SearchResults> results) {
+            searchArrayList = results;
+            mInflater = LayoutInflater.from(context);
+        }
+
+        public int getCount() {
+            return searchArrayList.size();
+        }
+
+        public Object getItem(int position) {
+            return searchArrayList.get(position);
+        }
+
+
+        public long getItemId(int position) {
+            return position;
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder;
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.list_item, null);
+                holder = new ViewHolder();
+                holder.txtName = (TextView) convertView.findViewById(R.id.txtdatum);
+                holder.txtCityState = (TextView) convertView.findViewById(R.id.txtnazev);
+                holder.txtPhone = (TextView) convertView.findViewById(R.id.txthodnota);
+                holder.txtJednotky = (TextView)convertView.findViewById(R.id.txtjednotky);
+
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            holder.txtName.setText(searchArrayList.get(position).getName());
+            holder.txtCityState.setText(searchArrayList.get(position).getCityState());
+            holder.txtPhone.setText(searchArrayList.get(position).getPhone());
+            holder.txtJednotky.setText(searchArrayList.get(position).getJednotka());
+
+            return convertView;
+        }
+
+        public class ViewHolder {
+            TextView txtName;
+            TextView txtCityState;
+            TextView txtPhone;
+            TextView txtJednotky;
+        }
     }
 }

@@ -2,6 +2,7 @@ package ttrmg.pef.agris;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.app.ListFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -143,6 +144,8 @@ public class FragmentView extends Fragment implements View.OnClickListener {
 
         public void toast(String toast);
     }
+
+
 
     public boolean isConnect() {
         boolean connected = false;
