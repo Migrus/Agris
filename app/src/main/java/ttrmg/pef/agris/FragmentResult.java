@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -28,6 +29,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -55,9 +58,11 @@ public class FragmentResult extends Fragment {
     // Hashmap for ListView
     ArrayList<HashMap<String, String>> contactList;
     ArrayList<String> adapterList;
+    private RadioGroup radioGroup,radioGroup2;
 
     private OnFragmentInteractionListener mListener;
-    public static Integer komodity;
+    public static Integer komodity,razeniMena = 1;
+    public static String razeniNazev = TAG_ID;
 
 
     ListView list2;
@@ -95,6 +100,35 @@ public class FragmentResult extends Fragment {
         View v = inflater.inflate(R.layout.fragment_result, container, false);
         adapterList = new ArrayList<>();
         list2 = (ListView) v.findViewById(R.id.list2);
+
+        radioGroup2 = (RadioGroup)v.findViewById(R.id.mena);
+        radioGroup = (RadioGroup)v.findViewById(R.id.sort);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(checkedId == R.id.radioDefault) {
+                    razeniNazev = TAG_ID;
+                } else if(checkedId == R.id.radioName) {
+                    razeniNazev = TAG_NAZEV;
+                } else {
+                    razeniNazev = TAG_HODNOTA;
+                }
+                razeni(razeniNazev,razeniMena);
+            }
+
+        });
+        radioGroup2.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(checkedId == R.id.radioCZK) {
+                    razeniMena = 1;
+                } else {
+                    razeniMena = 0;
+                }
+                razeni(razeniNazev,razeniMena);
+            }
+
+        });
 
 
         return v;
@@ -149,6 +183,41 @@ public class FragmentResult extends Fragment {
         // TODO: Update argument type and name
         public void toast(String toast);
     }
+
+    public void razeni(final String coRadime, Integer cena){
+        Collections.sort(contactList, new Comparator<HashMap<String, String>>() {
+            @Override
+            public int compare(HashMap<String, String> first, HashMap<String, String> second) {
+                //return obj1.name.compareToIgnoreCase(obj2.name);
+                String firstValue = first.get(coRadime);
+                String secondValue = second.get(coRadime);
+                return firstValue.compareTo(secondValue);
+            }
+        });
+
+        ArrayList<SearchResults> results = new ArrayList<SearchResults>();
+        for (int i = 0; i < contactList.size(); i++) {
+            String date = contactList.get(i).get(TAG_DATUM).substring(6, 16);
+            String datum = new SimpleDateFormat("MM/dd/yyyy").format(new Date(Integer.parseInt(date) * 1000L));
+
+            SearchResults sr = new SearchResults();
+            sr.setName(datum);
+            sr.setCityState(contactList.get(i).get(TAG_NAZEV));
+            if (cena == 1) {
+                sr.setPhone(contactList.get(i).get(TAG_HODNOTA));
+                sr.setJednotky(contactList.get(i).get(TAG_MENA) + "/" + contactList.get(i).get(TAG_MIRA));
+            } else {
+                sr.setPhone(contactList.get(i).get(TAG_HODNOTA));
+                sr.setJednotky(contactList.get(i).get(TAG_ALT_MENA) + "/" + contactList.get(i).get(TAG_MIRA));
+            }
+
+
+            results.add(sr);
+        }
+
+        list2.setAdapter(new MyCustomBaseAdapter(getActivity(), results));
+    }
+
 
     public boolean isConnect()
     {
@@ -264,22 +333,7 @@ public class FragmentResult extends Fragment {
             if (pDialog.isShowing())
                 pDialog.dismiss();
 
-            ArrayList<SearchResults> results = new ArrayList<SearchResults>();
-
-
-            for (int i = 0; i < contactList.size(); i++) {
-                String date = contactList.get(i).get(TAG_DATUM).substring(6, 16);
-                String datum = new SimpleDateFormat("MM/dd/yyyy").format(new Date(Integer.parseInt(date) * 1000L));
-
-                SearchResults sr = new SearchResults();
-                sr.setName(datum);
-                sr.setCityState(contactList.get(i).get(TAG_NAZEV));
-                sr.setPhone(contactList.get(i).get(TAG_HODNOTA));
-                sr.setJednotky(contactList.get(i).get(TAG_MENA) + "/" + contactList.get(i).get(TAG_MIRA));
-                results.add(sr);
-            }
-
-            list2.setAdapter(new MyCustomBaseAdapter(getActivity(), results));
+           razeni(razeniNazev,razeniMena);
 
 
             /**

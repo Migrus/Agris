@@ -16,7 +16,8 @@
         android:id="@+id/send"
         android:padding="10dp"
         android:text="fragment 2"
-        android:layout_gravity="left|bottom" />
+        android:layout_gravity="left|bottom"
+        android:visibility="invisible"/>
 
 
 </FrameLayout>

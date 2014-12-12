@@ -37,7 +37,7 @@
                             android:id="@+id/radioDefault"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Datum" />
+                            android:text="ID" />
 
                         <RadioButton
                             android:id="@+id/radioName"
@@ -68,7 +68,7 @@
                         android:id="@+id/mena"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checkedButton="@+id/radioDefault"
+                        android:checkedButton="@+id/radioCZK"
                         android:orientation="vertical">
 
                         <RadioButton
@@ -78,7 +78,7 @@
                             android:text="CZK" />
 
                         <RadioButton
-                            android:id="@+id/EUR"
+                            android:id="@+id/radioEUR"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="EUR" />
