@@ -200,15 +200,26 @@ public class FragmentResult extends Fragment {
             String date = contactList.get(i).get(TAG_DATUM).substring(6, 16);
             String datum = new SimpleDateFormat("MM/dd/yyyy").format(new Date(Integer.parseInt(date) * 1000L));
 
+            Double eurCena = 0.0;
             SearchResults sr = new SearchResults();
             sr.setName(datum);
             sr.setCityState(contactList.get(i).get(TAG_NAZEV));
-            if (cena == 1) {
+            if (cena == 1) { //kdyz chci KC
                 sr.setPhone(contactList.get(i).get(TAG_HODNOTA));
-                sr.setJednotky(contactList.get(i).get(TAG_MENA) + "/" + contactList.get(i).get(TAG_MIRA));
-            } else {
-                sr.setPhone(contactList.get(i).get(TAG_HODNOTA));
-                sr.setJednotky(contactList.get(i).get(TAG_ALT_MENA) + "/" + contactList.get(i).get(TAG_MIRA));
+                if (contactList.get(i).get(TAG_ALT_MENA) == "Kč ") {
+                    sr.setJednotky(contactList.get(i).get(TAG_ALT_MENA) + "/" + contactList.get(i).get(TAG_MIRA));
+                } else {
+                    sr.setJednotky(contactList.get(i).get(TAG_MENA) + "/" + contactList.get(i).get(TAG_MIRA));
+                }
+            } else { // kdyz chci jinou menu
+                eurCena = (Float.parseFloat(contactList.get(i).get(TAG_HODNOTA))/27.5);
+                sr.setPhone(eurCena.toString());
+                if (contactList.get(i).get(TAG_ALT_MENA) == "Kč ") {
+                    sr.setJednotky(contactList.get(i).get(TAG_MENA) + "/" + contactList.get(i).get(TAG_MIRA));
+                } else {
+                    sr.setJednotky(contactList.get(i).get(TAG_ALT_MENA) + "/" + contactList.get(i).get(TAG_MIRA));
+                }
+
             }
 
 
@@ -329,33 +340,10 @@ public class FragmentResult extends Fragment {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            // Dismiss the progress dialog
             if (pDialog.isShowing())
                 pDialog.dismiss();
 
-           razeni(razeniNazev,razeniMena);
-
-
-            /**
-            for (int i = 0; i < contactList.size(); i++) {
-                String date = contactList.get(i).get(TAG_DATUM).substring(6,16);
-                String  datum = new SimpleDateFormat("MM/dd/yyyy").format(new Date(Integer.parseInt(date) * 1000L));
-                String sr1 = "";
-                sr1 =  datum + "  " + (contactList.get(i).get(TAG_NAZEV))+ "  " + (contactList.get(i).get(TAG_HODNOTA))
-                        + "  " + (contactList.get(i).get(TAG_MENA)+"/"+contactList.get(i).get(TAG_MIRA));
-                adapterList.add(sr1);
-            }
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, adapterList);
-            list2.setAdapter(adapter);
-             */
-
-            /**
-             * Updating parsed JSON data into ListView
-             * */
-
-            //Toast(contactList.get(0).get(0));
-            //Toast(result);
+           razeni(razeniNazev,1);
         }
     }
 
