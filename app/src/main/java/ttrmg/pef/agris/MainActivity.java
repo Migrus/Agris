@@ -51,11 +51,8 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
         setContentView(R.layout.activity_main);
         FragmentView formFragment = FragmentView.newInstance();
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, formFragment)
-                    .commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.container, formFragment).commit();
         }
-
     }
 
 
@@ -90,15 +87,15 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
     }
 
 
-    @Override
-    public void sendButton() {
+
+    public void itemClick(Integer pozice) {
         if (findViewById(R.id.result) == null) {
-            FragmentResult formFragment = FragmentResult.newInstance();
+            FragmentResult formFragment = FragmentResult.newInstance(pozice);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, formFragment).addToBackStack(null)
                     .commit();
         } else {
-            FragmentResult formFragment = FragmentResult.newInstance();
+            FragmentResult formFragment = FragmentResult.newInstance(pozice);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.result, formFragment).addToBackStack(null)
                     .commit();
@@ -106,11 +103,19 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
     }
 
 
+    @Override
+    public void sendButton() {
+
+    }
+
 
     @Override
     public void toast(String toast) {
         showToast(toast);
     }
+
+
+    public void clickItem(Integer pozice) { itemClick(pozice);}
 
 
 

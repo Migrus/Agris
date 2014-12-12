@@ -57,11 +57,14 @@ public class FragmentResult extends Fragment {
     ArrayList<String> adapterList;
 
     private OnFragmentInteractionListener mListener;
+    public static Integer komodity;
+
 
     ListView list2;
 
-    public static FragmentResult newInstance() {
+    public static FragmentResult newInstance(Integer pozice) {
         FragmentResult fragment = new FragmentResult();
+        komodity = pozice;
         return fragment;
     }
 
@@ -156,7 +159,7 @@ public class FragmentResult extends Fragment {
             //we are connected to a network
             connected = true;
             mListener.toast("Připojeno");
-            triggerDownload("http://develop.agris.cz/Prices/Commodities/2?vratmi=json&mena=CZK");
+            triggerDownload("http://develop.agris.cz/Prices/Commodities/"+komodity+"?vratmi=json&mena=CZK");
         }
         else {
             connected = false;

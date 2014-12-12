@@ -1,24 +1,27 @@
 package ttrmg.pef.agris;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.ListActivity;
-import android.app.ListFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,9 +32,12 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class FragmentView extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -100,6 +106,23 @@ public class FragmentView extends Fragment implements View.OnClickListener {
         list1 = (ListView) view.findViewById(R.id.list1);
         adapterList = new ArrayList<>();
         isConnect();
+
+
+        list1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                String poziceKomodity = contactList.get(position).get(TAG_ID);
+                Integer intPoziceKomodity = Integer.parseInt(poziceKomodity);
+
+                mListener.itemClick(intPoziceKomodity);
+
+            }
+
+        });
+
+
         return view;
     }
 
@@ -141,7 +164,7 @@ public class FragmentView extends Fragment implements View.OnClickListener {
      */
     public interface OnFragmentInteractionListener {
         public void sendButton();
-
+        public void itemClick(Integer pozice);
         public void toast(String toast);
     }
 
@@ -253,35 +276,34 @@ public class FragmentView extends Fragment implements View.OnClickListener {
             if (pDialog.isShowing())
                 pDialog.dismiss();
 
+                    for (int i = 0; i < contactList.size(); i++) {
 
-            for (int i = 0; i < contactList.size(); i++) {
+                        String sr1 = "";
+                        sr1 = (contactList.get(i).get(TAG_NAZEV));
+                        adapterList.add(sr1);
+                    }
 
-                String sr1 = "";
-                sr1 = (contactList.get(i).get(TAG_NAZEV));
-                adapterList.add(sr1);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, adapterList);
+                    list1.setAdapter(adapter);
+
+                    //ArrayAdapter<String> adapterDatum = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, ceny);
+
+                    //list1.setAdapter(adapterDatum);
+
+                    /**
+                     * Updating parsed JSON data into ListView
+                     * */
+
+                    //Toast(contactList.get(0).get(0));
+                    //Toast(result);
+                }
             }
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, adapterList);
-            list1.setAdapter(adapter);
+                    // Given a URL, establishes an HttpUrlConnection and retrieves
+                    // the web page content as a InputStream, which it returns as
+                    // a string.
 
-            //ArrayAdapter<String> adapterDatum = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, ceny);
-
-            //list1.setAdapter(adapterDatum);
-
-            /**
-             * Updating parsed JSON data into ListView
-             * */
-
-            //Toast(contactList.get(0).get(0));
-            //Toast(result);
-        }
-    }
-
-    // Given a URL, establishes an HttpUrlConnection and retrieves
-    // the web page content as a InputStream, which it returns as
-    // a string.
-
-    private String downloadUrl(String myurl) throws IOException {
+        private String downloadUrl(String myurl) throws IOException {
         InputStream is = null;
         // Only display the first 500 characters of the retrieved
         // web page content.
