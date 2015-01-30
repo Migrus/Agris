@@ -42,9 +42,6 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
 
 
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +94,7 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
         } else {
             FragmentResult formFragment = FragmentResult.newInstance(pozice);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.result, formFragment).addToBackStack(null)
+                    .replace(R.id.result, formFragment).addToBackStack(null)
                     .commit();
         }
     }

@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,6 +52,10 @@ public class FragmentResult extends Fragment {
     private static final String TAG_MENA = "mena";
     private static final String TAG_MIRA = "mira";
     private static final String TAG_ALT_MENA = "alt_mena";
+
+    private static final Double EUR = 27.8;
+    private static final Double USD = 24.1;
+    private static final Double USc = 100.0;
 
     // contacts JSONArray
     JSONArray contacts = null;
@@ -183,6 +188,14 @@ public class FragmentResult extends Fragment {
         // TODO: Update argument type and name
         public void toast(String toast);
     }
+    String Zaokrouhli(String d) {
+        int mezera = 0;
+        for (int i=0; i < d.length();i++){
+                if (d.substring(i, i) == ".") mezera = i;
+        }
+        mezera = mezera+2;
+        return d.substring(0,mezera);
+    }
 
     public void razeni(final String coRadime, Integer cena){
         Collections.sort(contactList, new Comparator<HashMap<String, String>>() {
@@ -200,29 +213,65 @@ public class FragmentResult extends Fragment {
             String date = contactList.get(i).get(TAG_DATUM).substring(6, 16);
             String datum = new SimpleDateFormat("MM/dd/yyyy").format(new Date(Integer.parseInt(date) * 1000L));
 
-            Double eurCena = 0.0;
+            Double ciziCena = 0.0;
+            String ciziCenaS ="";
+
             SearchResults sr = new SearchResults();
             sr.setName(datum);
             sr.setCityState(contactList.get(i).get(TAG_NAZEV));
-            if (cena == 1) { //kdyz chci KC
-                sr.setPhone(contactList.get(i).get(TAG_HODNOTA));
-                if (contactList.get(i).get(TAG_ALT_MENA) == "Kč ") {
-                    sr.setJednotky(contactList.get(i).get(TAG_ALT_MENA) + "/" + contactList.get(i).get(TAG_MIRA));
-                } else {
-                    sr.setJednotky(contactList.get(i).get(TAG_MENA) + "/" + contactList.get(i).get(TAG_MIRA));
+            DecimalFormat formatter = new DecimalFormat("#.##");
+            if (cena==1){
+                switch(contactList.get(i).get(TAG_MENA)) {
+                    case "Kč  ":
+                        sr.setPhone(contactList.get(i).get(TAG_HODNOTA));
+                        break;
+                    case "EUR ":
+                        ciziCena = (Float.parseFloat(contactList.get(i).get(TAG_HODNOTA))*EUR);
+                        ciziCenaS = formatter.format(ciziCena);
+                        sr.setPhone(ciziCenaS);
+                        break;
+                    case "USD ":
+                        ciziCena = (Float.parseFloat(contactList.get(i).get(TAG_HODNOTA))*USD);
+                        ciziCenaS = formatter.format(ciziCena);
+                        sr.setPhone(ciziCenaS);
+                        break;
+                    case "USc ":
+                        ciziCena = (Float.parseFloat(contactList.get(i).get(TAG_HODNOTA))*USc);
+                        ciziCenaS = formatter.format(ciziCena);
+                        sr.setPhone(ciziCenaS);
+                        break;
+                    default:
+                        // singleChar is a consonant! Execute this code instead!
+                        break;
                 }
-            } else { // kdyz chci jinou menu
-                eurCena = (Float.parseFloat(contactList.get(i).get(TAG_HODNOTA))/27.5);
-                sr.setPhone(eurCena.toString());
-                if (contactList.get(i).get(TAG_ALT_MENA) == "Kč ") {
-                    sr.setJednotky(contactList.get(i).get(TAG_MENA) + "/" + contactList.get(i).get(TAG_MIRA));
-                } else {
-                    sr.setJednotky(contactList.get(i).get(TAG_ALT_MENA) + "/" + contactList.get(i).get(TAG_MIRA));
-                }
-
+                sr.setJednotky("Kč/" + contactList.get(i).get(TAG_MIRA));
             }
-
-
+            if (cena==0){
+                switch(contactList.get(i).get(TAG_MENA)) {
+                    case "Kč  ":
+                        ciziCena = (Float.parseFloat(contactList.get(i).get(TAG_HODNOTA))/EUR);
+                        ciziCenaS = formatter.format(ciziCena);
+                        sr.setPhone(ciziCenaS);
+                        break;
+                    case "EUR ":
+                        sr.setPhone(contactList.get(i).get(TAG_HODNOTA));
+                        break;
+                    case "USD ":
+                        ciziCena = (Float.parseFloat(contactList.get(i).get(TAG_HODNOTA))*(EUR/USD));
+                        ciziCenaS = formatter.format(ciziCena);
+                        sr.setPhone(ciziCenaS);
+                        break;
+                    case "USc ":
+                        ciziCena = (Float.parseFloat(contactList.get(i).get(TAG_HODNOTA))*(EUR/USc));
+                        ciziCenaS = formatter.format(ciziCena);
+                        sr.setPhone(ciziCenaS);
+                        break;
+                    default:
+                        // singleChar is a consonant! Execute this code instead!
+                        break;
+                }
+                sr.setJednotky("EUR/" + contactList.get(i).get(TAG_MIRA));
+            }
             results.add(sr);
         }
 
