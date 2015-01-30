@@ -23,6 +23,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -59,6 +62,9 @@ public class FragmentResult extends Fragment {
 
     // contacts JSONArray
     JSONArray contacts = null;
+    boolean connected = false;
+    public String fileName="";
+
 
     // Hashmap for ListView
     ArrayList<HashMap<String, String>> contactList;
@@ -188,15 +194,6 @@ public class FragmentResult extends Fragment {
         // TODO: Update argument type and name
         public void toast(String toast);
     }
-    String Zaokrouhli(String d) {
-        int mezera = 0;
-        for (int i=0; i < d.length();i++){
-                if (d.substring(i, i) == ".") mezera = i;
-        }
-        mezera = mezera+2;
-        return d.substring(0,mezera);
-    }
-
     public void razeni(final String coRadime, Integer cena){
         Collections.sort(contactList, new Comparator<HashMap<String, String>>() {
             @Override
@@ -241,7 +238,7 @@ public class FragmentResult extends Fragment {
                         sr.setPhone(ciziCenaS);
                         break;
                     default:
-                        // singleChar is a consonant! Execute this code instead!
+                        sr.setPhone(contactList.get(i).get(TAG_HODNOTA));
                         break;
                 }
                 sr.setJednotky("Kč/" + contactList.get(i).get(TAG_MIRA));
@@ -267,7 +264,7 @@ public class FragmentResult extends Fragment {
                         sr.setPhone(ciziCenaS);
                         break;
                     default:
-                        // singleChar is a consonant! Execute this code instead!
+                        sr.setPhone(contactList.get(i).get(TAG_HODNOTA));
                         break;
                 }
                 sr.setJednotky("EUR/" + contactList.get(i).get(TAG_MIRA));
@@ -281,18 +278,21 @@ public class FragmentResult extends Fragment {
 
     public boolean isConnect()
     {
-        boolean connected = false;
+
         ConnectivityManager connectivityManager = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        fileName = komodity.toString();
         if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                 connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             //we are connected to a network
             connected = true;
             mListener.toast("Připojeno");
             triggerDownload("http://develop.agris.cz/Prices/Commodities/"+komodity+"?vratmi=json&mena=CZK");
+
         }
         else {
             connected = false;
             mListener.toast("Nepřipojeno");
+            triggerDownload("http://develop.agris.cz/Prices/Commodities/"+komodity+"?vratmi=json&mena=CZK");
         }
         return  connected;
     }
@@ -305,6 +305,7 @@ public class FragmentResult extends Fragment {
             new DownloadWebpageTask().execute(stringUrl);
         } else {
             mListener.toast("Připojení k internetu není k dispozici!");
+            new DownloadWebpageTask().execute(stringUrl);
         }
     }
 
@@ -330,14 +331,41 @@ public class FragmentResult extends Fragment {
 
             String jsonStr = null;
             // params comes from the execute() call: params[0] is the url.
-            try {
-                jsonStr = downloadUrl(urls[0]);
-            } catch (IOException e) {
-                Log.e("ServiceHandler", "problem");
-                return null;
+            if (connected == true) {
+                try {
+                    jsonStr = downloadUrl(urls[0]);
+                } catch (IOException e) {
+                    Log.e("ServiceHandler", "problem");
+                    return null;
+                }
             }
-
+            if (connected == false) {
+                FileInputStream fis;
+                String content = "";
+                try {
+                    fis = getActivity().openFileInput(fileName);
+                    byte[] input = new byte[fis.available()];
+                    while (fis.read(input) != -1) {
+                    }
+                    content += new String(input);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                jsonStr = content;
+            }
             if (jsonStr != null) {
+                if (connected != false) {
+                    FileOutputStream outputStream;
+                    try {
+                        outputStream = getActivity().openFileOutput(fileName, Context.MODE_PRIVATE);
+                        outputStream.write(jsonStr.getBytes());
+                        outputStream.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 try {
                     JSONObject jsonObj = new JSONObject(jsonStr);
 

@@ -27,6 +27,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -51,6 +54,7 @@ public class FragmentView extends Fragment implements View.OnClickListener {
     ListView list1;
 
 
+    boolean connected = false;
     public String name = "";
 
 
@@ -171,7 +175,7 @@ public class FragmentView extends Fragment implements View.OnClickListener {
 
 
     public boolean isConnect() {
-        boolean connected = false;
+
         ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                 connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
@@ -182,6 +186,7 @@ public class FragmentView extends Fragment implements View.OnClickListener {
         } else {
             connected = false;
             mListener.toast("Nepřipojeno");
+            triggerDownload("http://develop.agris.cz/Prices?vratmi=json");
         }
         return connected;
     }
@@ -194,6 +199,7 @@ public class FragmentView extends Fragment implements View.OnClickListener {
             new DownloadWebpageTask().execute(stringUrl);
         } else {
             mListener.toast("Připojení k internetu není k dispozici!");
+            new DownloadWebpageTask().execute(stringUrl);
         }
     }
 
@@ -219,14 +225,41 @@ public class FragmentView extends Fragment implements View.OnClickListener {
 
             String jsonStr = null;
             // params comes from the execute() call: params[0] is the url.
-            try {
-                jsonStr = downloadUrl(urls[0]);
-            } catch (IOException e) {
-                Log.e("ServiceHandler", "problem");
-                return null;
+            if (connected == true) {
+                try {
+                    jsonStr = downloadUrl(urls[0]);
+                } catch (IOException e) {
+                    Log.e("ServiceHandler", "problem");
+                    return null;
+                }
             }
-
+            if (connected == false) {
+                FileInputStream fis;
+                String content = "";
+                try {
+                    fis = getActivity().openFileInput("index");
+                    byte[] input = new byte[fis.available()];
+                    while (fis.read(input) != -1) {
+                    }
+                    content += new String(input);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                jsonStr = content;
+            }
             if (jsonStr != null) {
+                if (connected != false) {
+                    FileOutputStream outputStream;
+                    try {
+                        outputStream = getActivity().openFileOutput("index", Context.MODE_PRIVATE);
+                        outputStream.write(jsonStr.getBytes());
+                        outputStream.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 try {
                     JSONObject jsonObj = new JSONObject(jsonStr);
 
@@ -323,6 +356,10 @@ public class FragmentView extends Fragment implements View.OnClickListener {
 
             // Convert the InputStream into a string
             String contentAsString = convertStreamToString(is);
+
+
+
+
             return contentAsString;
 
             // Makes sure that the InputStream is closed after the app is
@@ -340,5 +377,4 @@ public class FragmentView extends Fragment implements View.OnClickListener {
     }
 
 }
-
 
