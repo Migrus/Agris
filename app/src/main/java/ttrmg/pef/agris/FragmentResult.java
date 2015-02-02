@@ -277,6 +277,8 @@ public class FragmentResult extends Fragment {
             results.add(sr);
         }
 
+
+
         list2.setAdapter(new MyCustomBaseAdapter(getActivity(), results));
     }
 
