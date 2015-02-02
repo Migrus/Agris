@@ -20,6 +20,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name="ttrmg.pef.agris.Prefs"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Light">
+            <intent-filter>
+                <action
+                    android:name="PrefsActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

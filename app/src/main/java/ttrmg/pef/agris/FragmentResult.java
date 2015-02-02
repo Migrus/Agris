@@ -3,11 +3,13 @@ package ttrmg.pef.agris;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,6 +66,7 @@ public class FragmentResult extends Fragment {
     JSONArray contacts = null;
     boolean connected = false;
     public String fileName="";
+    SharedPreferences settings;
 
 
     // Hashmap for ListView
@@ -101,7 +104,7 @@ public class FragmentResult extends Fragment {
     @Override
     public void onConfigurationChanged(Configuration newConfig){
         super.onConfigurationChanged(newConfig);
-        mListener.toast("onConfigurationChanged");
+       // mListener.toast("onConfigurationChanged");
     }
 
     @Override
@@ -111,56 +114,58 @@ public class FragmentResult extends Fragment {
         View v = inflater.inflate(R.layout.fragment_result, container, false);
         adapterList = new ArrayList<>();
         list2 = (ListView) v.findViewById(R.id.list2);
-
-        radioGroup2 = (RadioGroup)v.findViewById(R.id.mena);
-        radioGroup = (RadioGroup)v.findViewById(R.id.sort);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId == R.id.radioDefault) {
-                    razeniNazev = TAG_ID;
-                } else if(checkedId == R.id.radioName) {
-                    razeniNazev = TAG_NAZEV;
-                } else {
-                    razeniNazev = TAG_HODNOTA;
-                }
-                razeni(razeniNazev,razeniMena);
-            }
-
-        });
-        radioGroup2.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId == R.id.radioCZK) {
-                    razeniMena = 1;
-                } else {
-                    razeniMena = 0;
-                }
-                razeni(razeniNazev,razeniMena);
-            }
-
-        });
-
-
+        settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        onConfigChange();
         return v;
+    }
+
+    public void onConfigChange(){
+        switch(settings.getString("pref_mena","1")) {
+            case "CZK":
+                razeniMena = 1;
+                break;
+            case "EUR":
+                razeniMena = 0;
+                break;
+            default :
+                razeniMena = 1;
+                break;
+        }
+        switch(settings.getString("sort","1")) {
+            case "ID":
+                razeniNazev = TAG_ID;
+                break;
+            case "Název":
+                razeniNazev = TAG_NAZEV;
+                break;
+            case "Cena":
+                razeniNazev = TAG_HODNOTA;
+                break;
+            default :
+                razeniNazev = TAG_ID;
+                break;
+        }
+        razeni(razeniNazev,razeniMena);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         back = true;
-        mListener.toast("onPause");
+        //mListener.toast("onPause");
     }
 
     @Override
     public void onResume() {
         super.onPause();
         if (back) {
-            mListener.toast("onResume");
+            onConfigChange();
+            //mListener.toast("onResume");
             back = false;
         }
 
     }
+
 
 
     @Override
@@ -285,13 +290,13 @@ public class FragmentResult extends Fragment {
                 connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             //we are connected to a network
             connected = true;
-            mListener.toast("Připojeno");
+            //mListener.toast("Připojeno");
             triggerDownload("http://develop.agris.cz/Prices/Commodities/"+komodity+"?vratmi=json&mena=CZK");
 
         }
         else {
             connected = false;
-            mListener.toast("Nepřipojeno");
+            mListener.toast("Připojení k internetu není k dispozici!");
             triggerDownload("http://develop.agris.cz/Prices/Commodities/"+komodity+"?vratmi=json&mena=CZK");
         }
         return  connected;
@@ -420,7 +425,7 @@ public class FragmentResult extends Fragment {
             if (pDialog.isShowing())
                 pDialog.dismiss();
 
-           razeni(razeniNazev,1);
+           razeni(razeniNazev,razeniMena);
         }
     }
 

@@ -3,6 +3,7 @@ package ttrmg.pef.agris;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -57,6 +58,7 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
         return true;
     }
 
@@ -69,6 +71,8 @@ public class MainActivity extends ActionBarActivity implements FragmentView.OnFr
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent i = new Intent("PrefsActivity");
+            startActivity(i);
             return true;
         }
 

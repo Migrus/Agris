@@ -185,7 +185,7 @@ public class FragmentView extends Fragment implements View.OnClickListener {
             triggerDownload("http://develop.agris.cz/Prices?vratmi=json");
         } else {
             connected = false;
-            mListener.toast("Nepřipojeno");
+            mListener.toast("Připojení k internetu není k dispozici!");
             triggerDownload("http://develop.agris.cz/Prices?vratmi=json");
         }
         return connected;
@@ -198,7 +198,6 @@ public class FragmentView extends Fragment implements View.OnClickListener {
         if (networkInfo != null && networkInfo.isConnected()) {
             new DownloadWebpageTask().execute(stringUrl);
         } else {
-            mListener.toast("Připojení k internetu není k dispozici!");
             new DownloadWebpageTask().execute(stringUrl);
         }
     }
