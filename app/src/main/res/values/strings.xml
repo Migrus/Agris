@@ -2,8 +2,20 @@
 <resources>
 
     <string name="app_name">Agris</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Nastavení</string>
+    <string name="connected">Připojeno</string>
+    <string name="notconnected">Připojení k internetu není k dispozici!</string>
+    <string name="loading">Načítám data...</string>
+    <string name="name">Název</string>
+    <string name="price">Cena</string>
+
+    <string name="choosecur">Vyberte měnu</string>
+    <string name="cur">Měna</string>
+    <string name="sorting">Řazení</string>
+    <string name="choosesort">Vyberte způsob řazení</string>
+    <string name="date">Datum</string>
+    <string name="units">Jednotky</string>
+
 
     <string-array name="types">
         <item>ID</item>

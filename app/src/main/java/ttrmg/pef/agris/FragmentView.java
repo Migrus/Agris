@@ -181,11 +181,11 @@ public class FragmentView extends Fragment implements View.OnClickListener {
                 connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             //we are connected to a network
             connected = true;
-            mListener.toast("Připojeno");
+            //mListener.toast("Připojeno");
             triggerDownload("http://develop.agris.cz/Prices?vratmi=json");
         } else {
             connected = false;
-            mListener.toast("Připojení k internetu není k dispozici!");
+            mListener.toast(getResources().getString(R.string.notconnected));
             triggerDownload("http://develop.agris.cz/Prices?vratmi=json");
         }
         return connected;
@@ -213,7 +213,7 @@ public class FragmentView extends Fragment implements View.OnClickListener {
             super.onPreExecute();
             // Showing progress dialog
             pDialog = new ProgressDialog(getActivity());
-            pDialog.setMessage("Načítám data...");
+            pDialog.setMessage(getResources().getString(R.string.loading));
             pDialog.setCancelable(false);
             pDialog.show();
 

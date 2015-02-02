@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:title="Nastavení">
+    android:title="@string/action_settings">
 
 
     <ListPreference
@@ -10,15 +10,15 @@
         android:entries="@array/types"
         android:entryValues="@array/types"
         android:key="sort"
-        android:summary="Vyberte způsob řazení"
-        android:title="Řazení" />
+        android:summary="@string/choosesort"
+        android:title="@string/sorting" />
     <ListPreference
         android:defaultValue="1"
         android:entries="@array/types_values"
         android:entryValues="@array/types_values"
         android:key="pref_mena"
-        android:summary="Vyberte měnu"
-        android:title="Měna" />
+        android:summary="@string/choosecur"
+        android:title="@string/cur" />
 
 
 

@@ -141,6 +141,12 @@ public class FragmentResult extends Fragment {
             case "Cena":
                 razeniNazev = TAG_HODNOTA;
                 break;
+            case "Name":
+                razeniNazev = TAG_NAZEV;
+                break;
+            case "Price":
+                razeniNazev = TAG_HODNOTA;
+                break;
             default :
                 razeniNazev = TAG_ID;
                 break;
@@ -298,7 +304,7 @@ public class FragmentResult extends Fragment {
         }
         else {
             connected = false;
-            mListener.toast("Připojení k internetu není k dispozici!");
+            mListener.toast(getResources().getString(R.string.notconnected));
             triggerDownload("http://develop.agris.cz/Prices/Commodities/"+komodity+"?vratmi=json&mena=CZK");
         }
         return  connected;
@@ -311,7 +317,6 @@ public class FragmentResult extends Fragment {
         if (networkInfo != null && networkInfo.isConnected()) {
             new DownloadWebpageTask().execute(stringUrl);
         } else {
-            mListener.toast("Připojení k internetu není k dispozici!");
             new DownloadWebpageTask().execute(stringUrl);
         }
     }
@@ -327,7 +332,7 @@ public class FragmentResult extends Fragment {
             super.onPreExecute();
             // Showing progress dialog
             pDialog = new ProgressDialog(getActivity());
-            pDialog.setMessage("Načítám data...");
+            pDialog.setMessage(getResources().getString(R.string.loading));
             pDialog.setCancelable(false);
             pDialog.show();
 

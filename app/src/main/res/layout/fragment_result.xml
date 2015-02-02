@@ -18,22 +18,22 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Datum"
+                android:text="@string/date"
                 android:layout_weight="30"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Komodita"
+                android:text="@string/name"
                 android:layout_weight="60"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Cena"
+                android:text="@string/price"
                 android:layout_weight="15"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Jednotka"
+                android:text="@string/units"
                 android:layout_weight="15"/>
         </LinearLayout>
 
